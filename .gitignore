@@ -1,0 +1,20 @@
+# Build output and caches
+.gradle
+.kotlin
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# IDE (per-machine Android Studio settings)
+*.iml
+/.idea
+.DS_Store
+
+# Machine-specific paths (SDK location)
+local.properties
+
+# Secrets: release signing keys and their passwords must never be committed
+*.jks
+*.keystore
+keystore.properties
