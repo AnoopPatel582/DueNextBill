@@ -3,6 +3,8 @@ package com.anooppatel.cardtracker.engine
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 class PaiseTest {
 
@@ -43,5 +45,30 @@ class PaiseTest {
     fun `overflow throws instead of silently wrapping`() {
         shouldThrow<ArithmeticException> { Paise(Long.MAX_VALUE) + Paise(1) }
         shouldThrow<ArithmeticException> { Paise(Long.MIN_VALUE) - Paise(1) }
+    }
+
+    // One test, run once per row. '|' separates columns because the expected text contains commas.
+    @ParameterizedTest(name = "{0} paise -> {1}")
+    @CsvSource(
+        delimiter = '|',
+        value = [
+            "0          | ₹0.00",
+            "5          | ₹0.05",
+            "40790      | ₹407.90",
+            "359500     | ₹3,595.00",
+            "9999999    | ₹99,999.99",
+            "10000000   | ₹1,00,000.00",
+            "1000000000 | ₹1,00,00,000.00",
+            "-239900    | -₹2,399.00",
+            "-5         | -₹0.05",
+        ],
+    )
+    fun `formats with Indian digit grouping`(paise: Long, expected: String) {
+        Paise(paise).formatInr() shouldBe expected
+    }
+
+    @Test
+    fun `formats the most negative Long without overflowing`() {
+        Paise(Long.MIN_VALUE).formatInr() shouldBe "-₹92,23,37,20,36,85,47,758.08"
     }
 }
