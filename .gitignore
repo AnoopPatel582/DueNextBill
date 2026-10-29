@@ -1,7 +1,7 @@
 # Build output and caches
 .gradle
 .kotlin
-/build
+build/
 /captures
 .externalNativeBuild
 .cxx
