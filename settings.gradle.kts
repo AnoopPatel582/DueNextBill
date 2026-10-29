@@ -24,3 +24,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "DueNextBill"
 include(":app")
+include(":core:engine")
