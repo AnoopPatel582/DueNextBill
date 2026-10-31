@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
 class BillStatusTest {
 
@@ -141,5 +142,10 @@ class BillStatusTest {
         shouldThrow<IllegalArgumentException> {
             cardSummary(StatementAnchor(day(10, 8), rs(500)), sbi, emptyList(), emptyList(), today = day(10, 8))
         }
+    }
+
+    @Test
+    fun `days to due counts across a month boundary`() {
+        ChronoUnit.DAYS.between(LocalDate.of(2026, 12, 2), LocalDate.of(2026, 11, 28)) shouldBe -4
     }
 }
