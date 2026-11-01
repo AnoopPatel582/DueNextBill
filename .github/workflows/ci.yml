@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# The workflow only reads the code; it never writes to the repo.
+permissions:
+  contents: read
+
+# A new push to the same branch cancels the run that is still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # JDK 25 to match gradle-daemon-jvm.properties. `cache: gradle` keeps downloaded
+      # dependencies between runs, so later runs are faster.
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+          cache: gradle
+
+      - name: Engine tests, app unit tests, lint and debug build
+        run: ./gradlew :core:engine:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --console=plain
+
+      # When something fails, keep the HTML test and lint reports so you can download them from the run page.
+      - name: Upload reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reports
+          path: |
+            **/build/reports/
+            **/build/test-results/
+          retention-days: 7
