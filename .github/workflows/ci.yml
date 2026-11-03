@@ -32,7 +32,7 @@ jobs:
           cache: gradle
 
       - name: Engine tests, app unit tests, lint and debug build
-        run: ./gradlew :core:engine:test :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --console=plain
+        run: ./gradlew :core:engine:test :core:data:testDebugUnitTest :core:data:lintDebug :app:testDebugUnitTest :app:lintDebug :app:assembleDebug --console=plain
 
       # When something fails, keep the HTML test and lint reports so you can download them from the run page.
       - name: Upload reports
