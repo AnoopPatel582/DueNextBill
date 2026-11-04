@@ -20,6 +20,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    // The migration test reads the exported schemas as assets, so Robolectric must see them.
+    sourceSets {
+        named("test") {
+            assets.directories.add("$projectDir/schemas")
+        }
+    }
+    testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 // Room writes a JSON description of every database version here. Commit it: future migrations are tested against it.
@@ -38,6 +45,7 @@ dependencies {
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotlinx.coroutines.test)
 }
