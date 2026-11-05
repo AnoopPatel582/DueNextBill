@@ -12,8 +12,8 @@ Personal project, in development.
 |---|---|---|
 | M0 | Project setup | ✅ Done (`v0.0.1`) |
 | M1 | Billing engine: cycles, bills, payment status, reminders | ✅ Done (`v0.1.0`) |
-| M2 | Data layer (Room, encryption) and CI | 🚧 In progress |
-| M3 | Manual-entry app (Compose UI) | Planned |
+| M2 | Data layer (Room, encryption) and CI | ✅ Done (`v0.2.0`) |
+| M3 | Manual-entry app (Compose UI) | 🚧 Next |
 | M4 | Bank SMS parsers | Planned |
 | M5 | SMS capture | Planned |
 | M6 | Reminder notifications | Planned |
@@ -24,7 +24,7 @@ Personal project, in development.
 - **Everything stays on the phone.** No server, no account, and no internet permission.
 - **Only the bank name and the last 4 digits** of a card are stored. Never the full card number, CVV or PIN.
 - **OTP messages are never stored.**
-- The database will be encrypted (SQLCipher, with the key held by the Android Keystore).
+- **The database is encrypted** with SQLCipher (AES-256). Its key is random, made on the phone, and stored only in a form wrapped by an Android Keystore key, which never leaves the phone's secure hardware. The wrapped key is excluded from backups.
 
 ## How bills are computed
 
@@ -46,14 +46,16 @@ closing = opening − payments − credits + charges + EMI
 |---|---|
 | `app` | The Android app (Jetpack Compose UI) |
 | `core/engine` | Pure Kotlin, no Android: money, billing cycles, bills, payment status, reminders |
-| `core/data` | Room database: stores cards (and later entries, EMI lines and statements) and converts them to engine types |
+| `core/data` | Encrypted Room database (cards, ledger entries, EMI installments, statement totals), schema migrations, and `CardRepository`, which feeds the stored data through the engine and publishes a live overview per card |
 
 ## Tech stack
 
 - Kotlin, Jetpack Compose, Material 3
-- Room (SQLite), with KSP code generation
+- Room (SQLite), with KSP code generation and exported schemas for tested migrations
+- SQLCipher and the Android Keystore for encryption at rest
+- Kotlin coroutines and `Flow` for data that updates itself
 - Gradle (Kotlin DSL) with a version catalog; JDK 25 for the build, Java 11 bytecode
-- Tests: JUnit 5, Kotest assertions and property tests, Robolectric for database tests on the JVM
+- Tests: JUnit 5 and JUnit 4, Kotest assertions and property tests, Robolectric for database tests on the JVM, and on-device tests for encryption
 - Min SDK 26 (Android 8.0), target SDK 37
 
 ## Build and test
@@ -63,10 +65,11 @@ Requirements: Android Studio with the Android SDK. Gradle downloads JDK 25 autom
 ```bash
 ./gradlew :core:engine:test                # engine tests
 ./gradlew :core:data:testDebugUnitTest     # database tests (Robolectric, no phone needed)
+./gradlew :core:data:connectedDebugAndroidTest  # encryption tests on a connected phone
 ./gradlew :app:assembleDebug               # build the debug APK
 ```
 
-Every pull request runs the full test suite, lint and a debug build on GitHub Actions (`.github/workflows/ci.yml`).
+Every pull request runs the engine and database tests, lint and a debug build on GitHub Actions (`.github/workflows/ci.yml`). The on-device encryption tests need a real phone, so they are run by hand before merging changes to the encryption code.
 
 ## Development workflow
 
