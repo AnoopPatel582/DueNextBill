@@ -20,6 +20,10 @@ interface CardDao {
     @Query("SELECT * FROM cards WHERE id = :id")
     suspend fun byId(id: Long): CardEntity?
 
+    /** One card, re-emitted when it changes. Null if it doesn't exist (or was deleted). */
+    @Query("SELECT * FROM cards WHERE id = :id")
+    fun observeById(id: Long): Flow<CardEntity?>
+
     /** All cards, re-emitted every time the table changes. The home screen will collect this. */
     @Query("SELECT * FROM cards ORDER BY id")
     fun observeAll(): Flow<List<CardEntity>>
