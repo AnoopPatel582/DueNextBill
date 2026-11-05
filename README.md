@@ -19,6 +19,17 @@ Personal project, in development.
 | M6 | Reminder notifications | Planned |
 | M7 | Release | Planned |
 
+## Principles
+
+Credit cards already come with enough fine print and pressure. DueNextBill exists to make them less stressful, so every feature has to earn the user's trust.
+
+1. **Calm, never alarming.** Reminders state the facts ("₹3,595 due on 28 Oct, 3 days left") without fake urgency.
+2. **Honest about uncertainty.** Estimates are labelled as estimates ("so far", "may move to the next bill"). No false precision.
+3. **Plain language.** "Bill generated", "due in 3 days", "paid" instead of bank jargon. Card terms that matter, like the minimum due or interest, are explained in one line.
+4. **On the user's side.** The app points out fees, warns about the minimum-due trap, and shows the real cost of converting a spend to EMI.
+5. **No dark patterns.** No ads, no loans, no nagging, no hidden opt-ins. Your data is easy to export and the app is easy to leave.
+6. **Trust is earned by being right.** Predictions are checked against the real statement, every cycle.
+
 ## Privacy
 
 - **Everything stays on the phone.** No server, no account, and no internet permission.
