@@ -14,6 +14,7 @@ android {
 
     defaultConfig {
         minSdk = 26
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
@@ -40,6 +41,8 @@ dependencies {
 
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
+    // Encrypts the whole database file. Native code, so it only runs on a phone, not in Robolectric.
+    implementation(libs.sqlcipher.android)
 
     // Robolectric runs Android code (and so Room on real SQLite) on the laptop's JVM, without the phone.
     testImplementation(libs.junit)
@@ -48,4 +51,8 @@ dependencies {
     testImplementation(libs.androidx.room.testing)
     testImplementation(libs.kotest.assertions.core)
     testImplementation(libs.kotlinx.coroutines.test)
+    // On-phone tests (src/androidTest): real SQLCipher and the real Android Keystore
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.ext.junit.ktx)
+    androidTestImplementation(libs.kotest.assertions.core)
 }
